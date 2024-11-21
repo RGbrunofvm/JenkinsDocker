@@ -1,6 +1,5 @@
 plugins {
     id 'java'
-    id 'io.qameta.allure' version '2.11.2'
 }
 
 repositories {
@@ -19,13 +18,7 @@ dependencies {
 }
 
 test {
-    useTestNG() // Configurar TestNG como framework de pruebas
-    testLogging {
-        events "PASSED", "FAILED", "SKIPPED"
+    useTestNG {
+        suites 'src/test/resources/testng.xml' // Ruta al archivo TestNG XML
     }
-}
-
-allure {
-    version = '2.21.0'
-    autoconfigure = true
 }
