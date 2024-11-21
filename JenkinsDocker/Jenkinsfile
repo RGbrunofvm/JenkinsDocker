@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                git url: 'https://github.com/RGbrunofvm/JenkinsDocker.git', branch: 'main'
+            }
+        }
+        stage('Start Selenium Grid') {
+            steps {
+                sh 'docker-compose up -d'
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                sh './gradlew clean test'
+            }
+        }
+        stage('Stop Selenium Grid') {
+            steps {
+                sh 'docker-compose down'
+            }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: '**/build/reports/tests/test/index.html', allowEmptyArchive: true
+        }
+        always {
+                publishHTML(target: [
+                    allowMissing: true,
+                    keepAll: true,
+                    reportDir: 'build/reports/tests/test',
+                    reportFiles: 'index.html',
+                    reportName: 'Test Report'
+                ])
+            }
+    }
+}
